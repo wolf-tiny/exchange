@@ -14,6 +14,7 @@ const Input = ({ arr, cls, handle, change, object, over }) => {
         <input
           className={over && cls === 'original' &&  object[cls].value !== 0 ? 'error' : ''}
           type="number"
+          min="0"
           value={object[cls].value === 0 ? '' : object[cls].value}
           onChange={change(cls)} />
       </div>

@@ -35,6 +35,20 @@ const App = () => {
     setIsOver(true);
   }
 
+  const onInitInput = () => {
+    setObjectRate({
+      ...objectRate,
+      original: {
+        ...objectRate['original'],
+        value: 0
+      },
+      transform: {
+        ...objectRate['transform'],
+        value: 0
+      }
+    })
+  }
+
   const onRate = useCallback((origin, trans) => {
     let original = arrWallet.find(item => item.name === origin);
     let transform = arrWallet.find(item => item.name === trans);
@@ -67,9 +81,9 @@ const App = () => {
 
   useEffect(() => {
     if (arrWallet[0].rate) {
-      onRate('USD', 'EUR');
+      onRate(objectRate.original.name, objectRate.transform.name);
     }
-  }, [onRate, arrWallet])
+  }, [onRate, arrWallet, objectRate.original.name, objectRate.transform.name])
 
   const handleChangeSelect = (type) => (e) => {
     let other = type === 'original' ? 'transform' : 'original';
@@ -92,9 +106,9 @@ const App = () => {
   }
 
   const handleChangeInput = (type) => (e) => {
-    if (!arrWallet[0].rate) return
+    if (!arrWallet[0].rate) return;
 
-    let value = parseFloat(e.target.value === '' ? 0 : e.target.value);
+    let value = parseFloat(e.target.value === '' ? 0 : Math.abs(e.target.value));
     let other = type === 'original' ? 'transform' : 'original';
     let otherValue = dot4(type === 'original' ? value * rate : value / rate);
     let selectWallet = arrWallet.find(item => item.name === objectRate[type].name);
@@ -115,7 +129,7 @@ const App = () => {
       }
     })
 
-    if (!impossible) {
+    if (!impossible && e.target.value !== '') {
       setArrCalc(list => list.map(item => {
         if (item.name === objectRate[type].name) {
           return { ...item, value: dot4(type === 'original' ? selectWallet.value - value : selectWallet.value + value, 2) }
@@ -138,19 +152,8 @@ const App = () => {
       return {...item, value: val === 0 ? item.value : val}
     }))
 
-    onInit()
-
-    setObjectRate({
-      ...objectRate,
-      original: {
-        ...objectRate['original'],
-        value: 0
-      },
-      transform: {
-        ...objectRate['transform'],
-        value: 0
-      }
-    })
+    onInit();
+    onInitInput();
   }
 
   return (
@@ -179,6 +182,7 @@ const App = () => {
             </button>
           </div>
           <div className="effect"/>
+          <div className="effect-bottom"/>
         </div>
       </div>
     </div>
