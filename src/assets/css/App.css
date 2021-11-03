@@ -1,0 +1,144 @@
+.app-body {
+  min-width: 600px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ex-body {
+  width: 600px;
+  position: relative;
+  margin-top: -100px;
+}
+
+.ex-body .title p {
+  font-size: 50pt;
+  font-weight: bold;
+  margin: 0 0 50px 0;
+  color: #000;
+}
+
+.ex-body .title span {
+  font-size: 15pt;
+  font-weight: bold;
+  padding-left: 25px;
+  color: black;
+}
+
+table {
+  width: 100%;
+}
+
+th, td {
+  width: 33%;
+  text-align: center;
+}
+
+.ex-body {
+  overflow: hidden;
+}
+
+.ex-body .input {
+  margin: 20px 40px 0 80px;
+  display: flex;
+}
+
+.ex-body .input div {
+  display: flex;
+}
+
+.ex-body .button {
+  text-align: left;
+  position: absolute;
+  right: 44px;
+  bottom: 21px;
+}
+
+.ex-body .effect {
+  text-align: left;
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  right: -100px;
+  top: -100px;
+  border: 3px solid black;
+  border-radius: 100px;
+  background: black;
+}
+
+.ex-body .button button {
+  background: transparent;
+  border: 1px solid black;
+  border-radius: 50px;
+  outline: none;
+  padding: 10px 20px;
+  font-weight: bold;
+  font-size: 12pt;
+  color: black;
+}
+
+.ex-body .button button:hover {
+  transition-duration: 0.1s, 0.5s;
+  color: white;
+  background: black;
+}
+
+.ex-body button.disable {
+  color: black !important;
+  background: white !important;
+}
+
+.exchange .value {
+  margin-bottom: 50px;
+}
+
+input.error {
+  background-color: lightpink;
+}
+
+input {
+  border: 1px solid black;
+  outline: none;
+  width: 150px;
+  line-height: 30px;
+  border-radius: 4px;
+  background-color: transparent;
+  color: black;
+  font-size: 10pt;
+  padding: 0 0 0 7px;
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+select {
+  display: block !important;
+  padding: 0 7px;
+  line-height: 30px;
+  margin: 0;
+  border: none;
+  outline: none;
+  color: white;
+  font-size: 10pt;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  background-color: black;
+  display: flex;
+}
+
+.ex-body select.original {
+  background-color: black;
+}
+
+.ex-body .invalid {
+  text-align: center;
+}
+
+tr.real > td {
+  font-size: 30pt;
+}
+
+tr.virtual > td {
+  height: 30px;
+}
