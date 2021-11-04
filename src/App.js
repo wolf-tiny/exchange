@@ -16,9 +16,9 @@ const App = () => {
     { name: 'GBP', value: 10, character: '£' }
   ]);
   const [arrCalc, setArrCalc] = useState([
-    { name: 'USD', value: 0, character: '$' },
-    { name: 'EUR', value: 0, character: '€' },
-    { name: 'GBP', value: 0, character: '£' }
+    { name: 'USD', value: 200, character: '$' },
+    { name: 'EUR', value: 150, character: '€' },
+    { name: 'GBP', value: 10, character: '£' }
   ]);
   const [objectRate, setObjectRate] = useState({
     original: { name: 'USD', value: 0 },
@@ -28,12 +28,12 @@ const App = () => {
   const [titleRate, setTitleRate] = useState('');
   const [isOver, setIsOver] = useState(true);
   
-  const onInit = () => {
+  const onInit = useCallback(() => {
     setArrCalc(list => list.map(item => {
-      return { ...item, value: 0 }
+      return { ...item, value: arrWallet.find(temp => temp.name === item.name).value }
     }))
     setIsOver(true);
-  }
+  }, [arrWallet])
 
   const onInitInput = () => {
     setObjectRate({
@@ -64,7 +64,7 @@ const App = () => {
     setRate(temp);
 
     onInit()
-  }, [arrWallet])
+  }, [arrWallet, onInit])
 
   useEffect(() => {
     fetch('https://cdn.moneyconvert.net/api/latest.json')
@@ -89,7 +89,6 @@ const App = () => {
     let other = type === 'original' ? 'transform' : 'original';
     let otherName = arrWallet.filter(item => item.name !== e.target.value)[0].name;
 
-    console.log(otherName)
     onRate(type === 'transform' ? objectRate.original.name : e.target.value,
       type === 'transform' ? e.target.value : otherName)
 
@@ -160,7 +159,7 @@ const App = () => {
 
     setArrWallet(list => list.map(item => {
       let val = arrCalc.find(temp => temp.name === item.name).value;
-      return { ...item, value: val === 0 ? item.value : val }
+      return { ...item, value: val }
     }))
 
     onInit();

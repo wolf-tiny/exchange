@@ -16,10 +16,7 @@ const Value = ({ wallet, calc }) => {
           </tr>
           <tr className="virtual">
             {calc.map(item => <td key={item.name}>
-              {item.character +
-                (item.value !== 0 ?
-                  item.value :
-                  wallet.find(temp => temp.name === item.name).value)}
+              {item.character + item.value }
             </td>)}
           </tr>
         </tbody>
