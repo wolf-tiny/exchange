@@ -27,7 +27,7 @@ const App = () => {
   const [rate, setRate] = useState(0);
   const [titleRate, setTitleRate] = useState('');
   const [isOver, setIsOver] = useState(true);
-
+  
   const onInit = () => {
     setArrCalc(list => list.map(item => {
       return { ...item, value: 0 }
@@ -39,11 +39,11 @@ const App = () => {
     setObjectRate({
       ...objectRate,
       original: {
-        ...objectRate['original'],
+        ...objectRate.original,
         value: 0
       },
       transform: {
-        ...objectRate['transform'],
+        ...objectRate.transform,
         value: 0
       }
     })
@@ -87,9 +87,11 @@ const App = () => {
 
   const handleChangeSelect = (type) => (e) => {
     let other = type === 'original' ? 'transform' : 'original';
+    let otherName = arrWallet.filter(item => item.name !== e.target.value)[0].name;
 
-    onRate(type === 'transform' ? objectRate['original'].name : e.target.value,
-      type === 'transform' ? e.target.value : objectRate['transform'].name)
+    console.log(otherName)
+    onRate(type === 'transform' ? objectRate.original.name : e.target.value,
+      type === 'transform' ? e.target.value : otherName)
 
     setObjectRate({
       ...objectRate,
@@ -100,6 +102,7 @@ const App = () => {
       },
       [other]: {
         ...objectRate[other],
+        name: type === 'original' ? otherName : objectRate[other].name,
         value: 0
       }
     })
@@ -113,7 +116,9 @@ const App = () => {
     let otherValue = dot4(type === 'original' ? value * rate : value / rate);
     let selectWallet = arrWallet.find(item => item.name === objectRate[type].name);
     let otherWallet = arrWallet.find(item => item.name === objectRate[other].name);
-    let impossible = (arrWallet.find(item => item.name === objectRate['original'].name).value < (type === 'original' ? value : otherValue));
+    let impossible = (arrWallet.find(item =>
+      item.name === objectRate.original.name).value < (type === 'original' ?
+        value : otherValue));
 
     setIsOver(impossible)
 
@@ -132,9 +137,15 @@ const App = () => {
     if (!impossible && e.target.value !== '') {
       setArrCalc(list => list.map(item => {
         if (item.name === objectRate[type].name) {
-          return { ...item, value: dot4(type === 'original' ? selectWallet.value - value : selectWallet.value + value, 2) }
+          return {
+            ...item, value: dot4(type === 'original' ?
+              selectWallet.value - value : selectWallet.value + value, 2)
+          }
         } else if (item.name === objectRate[other].name) {
-          return { ...item, value: dot4(type === 'original' ? otherWallet.value + otherValue : otherWallet.value - otherValue, 2) }
+          return {
+            ...item, value: dot4(type === 'original' ?
+              otherWallet.value + otherValue : otherWallet.value - otherValue, 2)
+          }
         } else {
           return item
         }
@@ -149,7 +160,7 @@ const App = () => {
 
     setArrWallet(list => list.map(item => {
       let val = arrCalc.find(temp => temp.name === item.name).value;
-      return {...item, value: val === 0 ? item.value : val}
+      return { ...item, value: val === 0 ? item.value : val }
     }))
 
     onInit();
@@ -181,8 +192,8 @@ const App = () => {
               exchange
             </button>
           </div>
-          <div className="effect"/>
-          <div className="effect-bottom"/>
+          <div className="effect" />
+          <div className="effect-bottom" />
         </div>
       </div>
     </div>

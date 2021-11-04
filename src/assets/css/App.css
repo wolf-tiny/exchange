@@ -151,6 +151,7 @@ select {
 
 tr.real > td {
   font-size: 30pt;
+  font-weight: bold;
 }
 
 tr.virtual > td {
