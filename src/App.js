@@ -1,14 +1,43 @@
 import './assets/css/App.css';
+import './assets/css/icons.css';
 import React, { useState, useEffect, useCallback } from "react";
+import Modal from 'react-modal';
+
+import Web3 from "web3";
+import Web3Modal from "web3modal";
 
 import Input from './component/Input';
 import Value from './component/Value';
+
+Modal.setAppElement('#root');
+
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+  },
+  overlay: {
+    background: "#000000b0"
+  }
+};
 
 const dot4 = (value, count = 4) => {
   return Math.floor(value * Math.pow(10, count)) / Math.pow(10, count);
 }
 
 const App = () => {
+
+  const [account, setAccount] = useState('');
+  const [chainId, setChainId] = useState('');
+  const [balance, setBalance] = useState('');
+  const [web3, setWeb3] = useState(new Web3(Web3.givenProvider));
+
+  const [isModalConnect, setIsModalConnect] = useState(false);
+  const [isModalWallet, setIsModalWallet] = useState(false);
 
   const [arrWallet, setArrWallet] = useState([
     { name: 'USD', value: 200, character: '$' },
@@ -27,13 +56,22 @@ const App = () => {
   const [rate, setRate] = useState(0);
   const [titleRate, setTitleRate] = useState('');
   const [isOver, setIsOver] = useState(true);
-  
+
   const onInit = useCallback(() => {
     setArrCalc(list => list.map(item => {
       return { ...item, value: arrWallet.find(temp => temp.name === item.name).value }
     }))
     setIsOver(true);
   }, [arrWallet])
+
+  const providerOptions = {
+  };
+
+  const web3Modal = new Web3Modal({
+    network: "mainnet",
+    cacheProvider: true,
+    providerOptions
+  });
 
   const onInitInput = () => {
     setObjectRate({
@@ -166,6 +204,45 @@ const App = () => {
     onInitInput();
   }
 
+  const handleConnect = () => {
+    if (account === '') {
+      setIsModalConnect(true);
+    } else {
+      setIsModalWallet(true);
+    }
+  }
+
+  const handleWallet = async () => {
+    connectPrompt()
+  }
+
+  const handleDisconnect = async () => {
+    if (web3 && web3.currentProvider && web3.currentProvider.close) {
+      await web3.currentProvider.close();
+    }
+    web3Modal.clearCachedProvider();
+    setAccount('');
+    setBalance('');
+    setChainId('');
+    
+    setIsModalConnect(true);
+    setIsModalWallet(false);
+  }
+
+  async function connectPrompt() {
+    const provider = await web3Modal.connect();
+
+    setWeb3(new Web3(provider));
+    const firstAccount = await web3.eth.getAccounts().then(data => data[0]);
+    const chain = await web3.eth.getChainId();
+    const bal = await web3.eth.getBalance(firstAccount);
+    setAccount(firstAccount);
+    setChainId(chain);
+    setBalance(bal);
+    setIsModalConnect(false);
+    setIsModalWallet(true);
+  }
+
   return (
     <div className="app" translate="no">
       <div className="app-body">
@@ -191,10 +268,58 @@ const App = () => {
               exchange
             </button>
           </div>
+          <div className="wallet">
+            <button onClick={handleConnect}>
+              <i className={'mdi mdi-wallet'} />
+            </button>
+          </div>
           <div className="effect" />
           <div className="effect-bottom" />
         </div>
       </div>
+      <Modal
+        isOpen={isModalConnect}
+        onRequestClose={() => { setIsModalConnect(false) }}
+        style={customStyles}
+        contentLabel="Connect Modal"
+      >
+        <h4>Wallet details</h4>
+        <p className="warning">Wallet not connected. Please click the "Connect"button below</p>
+        <div className="modal-buttons">
+          <button onClick={() => { setIsModalConnect(false) }}>Cancel</button>
+          <button onClick={() => { handleWallet() }}>Connect</button>
+        </div>
+      </Modal>
+      <Modal
+        isOpen={isModalWallet}
+        onRequestClose={() => { setIsModalWallet(false) }}
+        style={customStyles}
+        contentLabel="Wallet Modal"
+      >
+        <h4>Wallet details</h4>
+        <div className="wallet-info">
+          <div>
+            <p>key</p>
+            <p>value</p>
+          </div>
+          <div>
+            <p>Account</p>
+            <p>{account}</p>
+          </div>
+          <div>
+            <p>Chain ID</p>
+            <p>{chainId}</p>
+          </div>
+          <div>
+            <p>Balance</p>
+            <p>{balance}</p>
+          </div>
+        </div>
+        <div className="modal-buttons">
+          <button onClick={() => { setIsModalWallet(false) }}>Cancel</button>
+          <button onClick={handleDisconnect}>Disconnect</button>
+        </div>
+      </Modal>
     </div>
   );
 }
